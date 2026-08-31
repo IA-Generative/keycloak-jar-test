@@ -68,7 +68,7 @@ final class AgentConnectIdentityProvider
 
   @Override
   protected void validateAcrClaim(String acrClaim) {
-    var mfaLevel = MFA_ACR_EIDAS_LEVELS.get(acrClaim);
+    var mfaLevel = acrClaim == null ? null : MFA_ACR_EIDAS_LEVELS.get(acrClaim);
 
     // An MFA-backed ACR is always accepted once it meets the configured eIDAS floor, regardless
     // of the MFA requirement mode: a user who did complete MFA should never be turned away.
