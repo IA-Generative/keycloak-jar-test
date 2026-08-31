@@ -107,13 +107,18 @@ final class ACFixture {
   }
 
   static AgentConnectIdentityProviderConfig givenConfigWithMfaEnabled() {
-    return givenConfigWithMfaEnabledAndEidasLevel(EidasLevel.EIDAS1.toString());
+    return givenConfigWithMfaRequirementAndEidasLevel(MfaRequirement.REQUIRED, EidasLevel.EIDAS1.toString());
   }
 
   static AgentConnectIdentityProviderConfig givenConfigWithMfaEnabledAndEidasLevel(String eidasLevelName) {
+    return givenConfigWithMfaRequirementAndEidasLevel(MfaRequirement.REQUIRED, eidasLevelName);
+  }
+
+  static AgentConnectIdentityProviderConfig givenConfigWithMfaRequirementAndEidasLevel(
+      MfaRequirement mfaRequirement, String eidasLevelName) {
     var model = new IdentityProviderModel();
     model.getConfig().put(ACEnvironment.ENVIRONMENT_PROPERTY_NAME, "integration_rie");
-    model.getConfig().put(AgentConnectIdentityProviderConfig.MFA_ENABLED_PROPERTY_NAME, "true");
+    model.getConfig().put(MfaRequirement.MFA_MODE_PROPERTY_NAME, mfaRequirement.name());
     model.getConfig().put(EidasLevel.EIDAS_LEVEL_PROPERTY_NAME, eidasLevelName);
     model.getConfig().put("ignoreAbsentStateParameterLogout", "false");
     model.getConfig().put("clientId", CLIENT_ID);
