@@ -205,6 +205,42 @@ class AgentConnectIdentityProviderTest {
     }
 
     @Test
+    void should_throw_exception_when_id_token_acr_claim_is_eidas0_and_selected_eidas_level_is_higher() throws IOException {
+      var kid = "RSA-KID";
+      var opaqueAccessToken = "2b3ea2e8-2d11-49a4-a369-5fb98d9d5315";
+      var signedIdTokenWithEidas0 = givenAnRSASignedJWTWithRegisteredKidInJWKS(kid, EIDAS0_JWT, publicKeysStore);
+
+      when(httpClientProvider.getString(config.getJwksUrl())).
+          thenReturn(publicKeysStore.toJsonFormat());
+
+      var tokenEndpointResponse = generateTokenEndpointResponse(opaqueAccessToken, signedIdTokenWithEidas0);
+
+      assertThatThrownBy(() -> provider.getFederatedIdentity(tokenEndpointResponse))
+          .isInstanceOf(IdentityBrokerException.class)
+          .hasMessage("The returned eIDAS level is insufficient");
+    }
+
+    @Test
+    void should_accept_eidas0_acr_claim_when_selected_eidas_level_is_eidas0() throws IOException {
+      var eidas0Config = givenConfigWithSelectedEnvAndSelectedEidasLevel("integration_rie", "eidas0");
+      eidas0Config.setEnabled(true);
+      var eidas0Provider = new AgentConnectIdentityProvider(session, eidas0Config);
+
+      var kid = "RSA-KID";
+      var opaqueAccessToken = "2b3ea2e8-2d11-49a4-a369-5fb98d9d5315";
+      var signedIdTokenWithEidas0 = givenAnRSASignedJWTWithRegisteredKidInJWKS(kid, EIDAS0_JWT, publicKeysStore);
+
+      when(httpClientProvider.getString(eidas0Config.getJwksUrl())).
+          thenReturn(publicKeysStore.toJsonFormat());
+
+      var tokenEndpointResponse = generateTokenEndpointResponse(opaqueAccessToken, signedIdTokenWithEidas0);
+
+      var brokeredIdentityContext = eidas0Provider.getFederatedIdentity(tokenEndpointResponse);
+
+      assertThat(brokeredIdentityContext).isNotNull();
+    }
+
+    @Test
     void should_throw_exception_when_id_token_does_not_contains_acr_claim() throws IOException {
       var kid = "RSA-KID";
       var opaqueAccessToken = "2b3ea2e8-2d11-49a4-a369-5fb98d9d5315";

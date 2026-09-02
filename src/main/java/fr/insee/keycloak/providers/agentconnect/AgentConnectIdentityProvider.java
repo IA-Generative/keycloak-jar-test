@@ -87,7 +87,7 @@ final class AgentConnectIdentityProvider
 
   static List<String> getMfaAcrValuesFor(EidasLevel minLevel) {
     return switch (minLevel) {
-      case EIDAS1 -> ALL_MFA_ACR_VALUES;
+      case EIDAS0, EIDAS1 -> ALL_MFA_ACR_VALUES;
       case EIDAS2 -> List.of("eidas2", "eidas3");
       case EIDAS3 -> List.of("eidas3");
     };

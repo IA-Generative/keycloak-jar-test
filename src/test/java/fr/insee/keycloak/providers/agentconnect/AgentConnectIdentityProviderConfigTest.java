@@ -21,6 +21,12 @@ class AgentConnectIdentityProviderConfigTest {
   @Test
   void should_initialize_config_with_selected_eidas_level_from_admin_interface() {
     var config = givenConfigWithSelectedEnvAndSelectedEidasLevel(
+        "integration_rie", "eidas0"
+    );
+
+    assertThat(config.getEidasLevel()).isEqualTo(EidasLevel.EIDAS0);
+
+    config = givenConfigWithSelectedEnvAndSelectedEidasLevel(
         "integration_rie", "eidas1"
     );
 

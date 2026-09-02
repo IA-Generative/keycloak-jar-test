@@ -12,6 +12,16 @@ import static fr.insee.keycloak.utils.SignatureUtils.*;
 
 final class ACFixture {
 
+  static final JWTClaimsSet EIDAS0_JWT = new JWTClaimsSet.Builder()
+      .subject("fakeSub")
+      .issuer("https://fca.integ02.agentconnect.rie.gouv.fr/api/v2")
+      .audience(CLIENT_ID)
+      .claim("nonce", "randomNonce")
+      .claim("idp", "AC")
+      .claim("acr", "eidas0")
+      .claim("amr", null)
+      .build();
+
   static final JWTClaimsSet EIDAS1_JWT = new JWTClaimsSet.Builder()
       .subject("fakeSub")
       .issuer("https://fca.integ02.agentconnect.rie.gouv.fr/api/v2")
